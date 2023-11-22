@@ -108,7 +108,7 @@ class User_commands():
 
             
 print(Fore.GREEN + """Time & Weather information. 
-CS50P Project by Josh Hofer - England""", Style.RESET_ALL)
+Project by Josh Hofer - England""", Style.RESET_ALL)
 user_commands = User_commands()
 
 def main():
