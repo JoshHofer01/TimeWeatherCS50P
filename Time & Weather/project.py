@@ -3,7 +3,6 @@ from datetime import datetime
 import requests
 import os
 from dotenv import load_dotenv
-from colorama import Fore, Style
 
 class User_commands():
     def __init__(self, timestyle=None, temptype=None, details=False):
@@ -107,8 +106,8 @@ class User_commands():
 
 
             
-print(Fore.GREEN + """Time & Weather information. 
-Project by Josh Hofer - England""", Style.RESET_ALL)
+print("""Time & Weather information. 
+Project by Josh Hofer - England""")
 user_commands = User_commands()
 
 def main():
@@ -165,6 +164,7 @@ def feelslike_statement(openweather_raw):
         temp = 1.8 * (temp_kelvin - 273) + 32
         temp = f"{temp:.2f}°F"
 
+    # Returns custom message based on kelvin provided by API, and includes temp in return message based on chosen tempstyle
     if temp_kelvin >= 303.15:
         return f"{temp}, drink some water! It's a hot day"
     elif temp_kelvin >= 293.15 and temp_kelvin < 303.15:
