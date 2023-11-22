@@ -2,7 +2,7 @@
 
 #### Video Demo: <https://youtu.be/Jy5RzHOr8F4>
 
-#### Features:
+# Features:
 - Select between 24-hour and 12-hour time formats.
 - Choose between Celsius (C) and Fahrenheit (F) temperature units.
 - Option to display detailed weather information including temperature, weather description, wind speed, humidity, and a "feels like" statement.
@@ -10,7 +10,7 @@
 - Automatic detection of user's local time based on the selected city.
 - Fetches real-time weather data using the OpenWeatherMap API.
 
-#### Description: 
+# Description: 
 The program supports roughly 400 locations, and will provide the user with all supported locations in a "Region/City" format, except for some American locations that support "Region/State|Country/City". Follow the on-screen prompts to select your preferences for time format, temperature units, and whether to display detailed weather information. You will then be prompted to choose a continent and city. The program will provide you with the current time and weather information based on your selections.
 Complex weather information can be specified and can be updated should an API subscription with more access gets used.
 
