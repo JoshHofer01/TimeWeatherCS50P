@@ -2,6 +2,7 @@ import pytz
 from datetime import datetime
 import requests
 import os
+import sys
 from dotenv import load_dotenv
 
 class User_commands():
@@ -24,7 +25,7 @@ class User_commands():
                 break
             else:
                 print("Invalid input, please enter '24' or '12'.")
-        
+
         while True:
             details = input("Would you like detailed weather info: (Y/N) ").strip().upper()
             if details == 'N':
@@ -47,7 +48,7 @@ class User_commands():
         continent_options = ['Africa','America','Asia','Antarctica','Australia','Europe']
         cities = []
         cities2 = []
-        
+
         print("Type the number corresponding with your choice: ")
         for index, continent in enumerate(continent_options, start=1):
             print(f"{index}. {continent}")
@@ -76,7 +77,7 @@ class User_commands():
         for index, city in enumerate(cities, start=1):
             print(f"{index}. {city}")
 
-        while True:             
+        while True:
             city = input("City: ")
             try:
                 city = cities[int(city) - 1]
@@ -92,7 +93,7 @@ class User_commands():
                     cities2.append(location.split('/')[2])
             for index, city in (enumerate(cities2, start=1)):
                 print(f"{index}. {city}")
-                
+
             # returns inputs to class methods
             while True:
                 city2 = input("City: ")
@@ -105,36 +106,42 @@ class User_commands():
             self.continent = continent_choice
 
 
-            
-print("""Time & Weather information. 
-Project by Josh Hofer - England""")
-user_commands = User_commands()
-
 def main():
+    print("""Time & Weather information.
+CS50P Final Project by Josh Hofer - England""")
+    #user commands variable must be in main otherwise interfers with pytest.
+    #assigns variables to methods in class
+    user_commands = User_commands()
+    temptype = user_commands.temptype
+    timestyle = user_commands.timestyle
     location = user_commands.get_location()
     continent = user_commands.continent
     city = user_commands.city
     city2 = user_commands.city2
+    
     if city2 == None:
         location = f"{continent}/{city}"
     else:
         location = f"{continent}/{city}/{city2}"
 
-    openweather_raw = get_openweather_info(city)
+    try:
+        openweather_raw = get_openweather_info(city)
+    except:
+        sys.exit("ERROR: Missing or Invalid API Key, please revisit environment variable to check API Key.")
     if city2 != None:
             city = city2
     if user_commands.details == True:
         print(f"You chose {continent}, {city.replace('_', ' ')}!")
-        print(f"The time in {city.replace('_', ' ')} is {get_time(location)}")
+        print(f"The time in {city.replace('_', ' ')} is {get_time(location, timestyle)}")
         try:
-            print(f"The temperature is currently {get_temp(openweather_raw)}, with {openweather_raw['weather'][0]['description']}.")
+            print(f"The temperature is currently {get_temp(openweather_raw, temptype)}, with {openweather_raw['weather'][0]['description']}.")
             print(f"Wind speed is {get_weather(openweather_raw)[1]}m/ph, with a humidity of {get_weather(openweather_raw)[0]}%.")
-            print(f"Finally, it feels like {feelslike_statement(openweather_raw)}")
+            print(f"Finally, it feels like {feelslike_statement(openweather_raw, temptype)}")
         except:
             print(f"Unfortunately, the weather for '{city.replace('_', ' ')}' is not supported in this version...")
     else:
         print(f"You chose {continent}, {city.replace('_', ' ')}!")
-        print(f"The local time in {city.replace('_', ' ')} is {get_time(location)}")
+        print(f"The local time in {city.replace('_', ' ')} is {get_time(location, timestyle)}")
         try:
             print(f"The current weather there is: {openweather_raw['weather'][0]['description'].capitalize()}")
         except:
@@ -142,25 +149,25 @@ def main():
 
 
 def get_weather(openweather_raw):
-    humidity = (openweather_raw['main']['humidity'])
-    wind_speed = (openweather_raw['wind']['speed'])
-    return humidity, wind_speed,
+    humidity = openweather_raw['main']['humidity']
+    wind_speed = openweather_raw['wind']['speed']
+    return humidity, wind_speed
 
-def get_temp(openweather_raw):
+def get_temp(openweather_raw, temptype):
     temp_kelvin = openweather_raw['main']['temp']
-    if user_commands.temptype == 'C':
+    if temptype == 'C':
         temp_celsius = temp_kelvin - 273.15
         return f"{temp_celsius:.2f}°C"
-    elif user_commands.temptype == 'F':
+    elif temptype == 'F':
         temp_fahrenheit = 1.8 * (temp_kelvin - 273) + 32
         return f"{temp_fahrenheit:.2f}°F"
-    
-def feelslike_statement(openweather_raw):
+
+def feelslike_statement(openweather_raw, temptype):
     temp_kelvin = openweather_raw['main']['feels_like']
-    if user_commands.temptype == 'C':
+    if temptype == 'C':
         temp = temp_kelvin - 273.15
         temp = f"{temp:.2f}°C"
-    elif user_commands.temptype == 'F':
+    elif temptype == 'F':
         temp = 1.8 * (temp_kelvin - 273) + 32
         temp = f"{temp:.2f}°F"
 
@@ -175,11 +182,11 @@ def feelslike_statement(openweather_raw):
         return f"{temp}, bring a jacket... It's a cold day"
 
 
-def get_time(location):
+def get_time(location, timestyle):
     try:
         timezone = pytz.timezone(location)
         time_at_city = datetime.now(timezone)
-        if user_commands.timestyle == '12':
+        if timestyle == '12':
             formatted_time = time_at_city.strftime('%I:%M:%S %p')
         else:
             formatted_time = time_at_city.strftime('%H:%M:%S')
@@ -196,7 +203,6 @@ def get_openweather_info(city):
     url = f"{base_url}appid={api_key}&q={city}"
     response = requests.get(url).json()
     return response
-
 
 if __name__ == "__main__":
     main()
