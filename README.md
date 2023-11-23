@@ -1,4 +1,5 @@
-# Local Time & Weather Info
+# Josh's Time & Weather Info - CS50P Final Project
+
 
 #### Video Demo: <https://youtu.be/Jy5RzHOr8F4>
 
