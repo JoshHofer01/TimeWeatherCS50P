@@ -1,4 +1,4 @@
-from project import get_weather, get_temp, feelslike_statement, get_time
+from project import get_temp, feelslike_statement, get_time
 from freezegun import freeze_time
 
 def main():
